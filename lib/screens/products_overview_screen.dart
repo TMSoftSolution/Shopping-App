@@ -4,10 +4,15 @@ import 'package:shopping_app/models/filter_option.dart';
 import 'package:shopping_app/providers/products.dart';
 import 'package:shopping_app/widgets/products_grid.dart';
 
-class ProductsOverviewScreen extends StatelessWidget {
+class ProductsOverviewScreen extends StatefulWidget {
+  @override
+  State<ProductsOverviewScreen> createState() => _ProductsOverviewScreenState();
+}
+
+class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
+  var _showOnlyFavorite = false;
   @override
   Widget build(BuildContext context) {
-    final productsContainer = Provider.of<Products>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text('Shop'),
@@ -15,11 +20,13 @@ class ProductsOverviewScreen extends StatelessWidget {
           PopupMenuButton(
               icon: Icon(Icons.more_vert),
               onSelected: (FilterOption option) {
-                if (option == FilterOption.Favorite) {
-                  productsContainer.showFavoritesOnly();
-                } else {
-                  productsContainer.showAll();
-                }
+                setState(() {
+                  if (option == FilterOption.Favorite) {
+                    _showOnlyFavorite = true;
+                  } else {
+                    _showOnlyFavorite = false;
+                  }
+                });
               },
               itemBuilder: (_) => [
                     PopupMenuItem(
@@ -33,7 +40,7 @@ class ProductsOverviewScreen extends StatelessWidget {
                   ])
         ],
       ),
-      body: ProductsGrid(),
+      body: ProductsGrid(_showOnlyFavorite),
     );
   }
 }
